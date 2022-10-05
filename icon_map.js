@@ -92,16 +92,16 @@ function icon_map() {
         }
         {
             const td = tr.insertCell();
+            var prefix = ', { "' + lineData[0].replaceAll(".png", "") + ' ", "\\u';
+            var postfix = '" }';
+            var value = '';
             if (lineData[3] === "")
-            {
-                var text = document.createTextNode(', { "' + lineData[0].replaceAll(".png", "") + '; ", "\\uf506", }');
-                td.appendChild(text);
-            }
+                value = "f506";
             else
-            {
-                var text = document.createTextNode(', { "' + lineData[0].replaceAll(".png", "") + '; ", "\\u' + lineData[3].toLowerCase() + '", }');
-                td.appendChild(text);
-            }
+                value = lineData[3].toLowerCase();
+
+            var text = document.createTextNode(prefix + value + postfix);
+            td.appendChild(text);
         }
     });
     document.getElementById('root').appendChild(tbl);
