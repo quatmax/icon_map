@@ -68,6 +68,11 @@ function icon_map() {
             var img = document.createElement('img');
             img.src = "https://quatmax.github.io/icon_map/png/" + lineData[0];
             td.appendChild(img);
+            var img = document.createElement('img');
+            img.src = "https://quatmax.github.io/icon_map/bi/" + lineData[2] + ".svg";
+            img.style.height = '32px';
+            img.style.width = '32px';
+            td.appendChild(img);
         }
         {
             const td = tr.insertCell();
