@@ -54,16 +54,7 @@ function visitRawLineData(file, visitLine, onFinished) {
 
 function icon_map() {
     tbl = document.createElement('table');
-    {
-        const tr = tbl.insertRow();
-        {
-            tr.insertCell().appendChild(document.createTextNode("name"));
-            tr.insertCell().appendChild(document.createTextNode("png"));
-            tr.insertCell().appendChild(document.createTextNode("bi name"));
-            tr.insertCell().appendChild(document.createTextNode("svg"));
-            tr.insertCell().appendChild(document.createTextNode("code"));
-        }
-    }
+    tbl.classList.add("table");
     visitRawLineData("https://quatmax.github.io/icon_map/icon_map.csv", function (lineData) {
         const tr = tbl.insertRow();
 
