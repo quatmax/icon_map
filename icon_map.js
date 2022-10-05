@@ -90,6 +90,19 @@ function icon_map() {
             var text = document.createTextNode(lineData[3]);
             td.appendChild(text);
         }
+        {
+            const td = tr.insertCell();
+            if (lineData[3] === "")
+            {
+                var text = document.createTextNode(', { "' + lineData[0].replaceAll(".png", "") + '; ", "\\uf506", }');
+                td.appendChild(text);
+            }
+            else
+            {
+                var text = document.createTextNode(', { "' + lineData[0].replaceAll(".png", "") + '; ", "\\u' + lineData[3].toLowerCase() + '", }');
+                td.appendChild(text);
+            }
+        }
     });
     document.getElementById('root').appendChild(tbl);
 }
