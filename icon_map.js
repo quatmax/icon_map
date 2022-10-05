@@ -75,7 +75,7 @@ function icon_map() {
         {
             const td = tr.insertCell();
             var img = document.createElement('img');
-            img.src = "/png/" + lineData[0];
+            img.src = "https://quatmax.github.io/icon_map/png/" + lineData[0];
             td.appendChild(img);
         }
         {
@@ -86,7 +86,7 @@ function icon_map() {
         {
             const td = tr.insertCell();
             var img = document.createElement('img');
-            img.src = "/bi/" + lineData[2] + ".svg";
+            img.src = "https://quatmax.github.io/icon_map/bi/" + lineData[2] + ".svg";
             td.appendChild(img);
         }
         {
