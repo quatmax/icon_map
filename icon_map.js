@@ -64,7 +64,7 @@ function icon_map() {
             tr.insertCell().appendChild(document.createTextNode("code"));
         }
     }
-    visitRawLineData(window.origin + "/icon_map.csv", function (lineData) {
+    visitRawLineData("https://quatmax.github.io/icon_map/icon_map.csv", function (lineData) {
         const tr = tbl.insertRow();
 
         {
