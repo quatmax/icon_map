@@ -39,7 +39,7 @@ function visitRawFile(filename, visitor) {
 
 function visitRawLineData(file, visitLine, onFinished) {
     visitRawFile(file, function (allTextLines) {
-        for (var index = 1; index < allTextLines.length; index++) {
+        for (var index = 0; index < allTextLines.length; index++) {
             var line = allTextLines[index].replaceAll("'", "");
             if (line.trim().length == 0) {
                 continue;
