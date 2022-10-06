@@ -81,12 +81,6 @@ function icon_map() {
         }
         {
             const td = tr.insertCell();
-            var img = document.createElement('img');
-            img.src = "https://quatmax.github.io/icon_map/bi/" + lineData[2] + ".svg";
-            td.appendChild(img);
-        }
-        {
-            const td = tr.insertCell();
             var text = document.createTextNode(lineData[3]);
             td.appendChild(text);
         }
