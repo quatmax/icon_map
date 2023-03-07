@@ -52,12 +52,12 @@ function visitRawLineData(file, visitLine, onFinished) {
     });
 }
 
-function createQML(filename, unicode) {
+function createQML(filename, unicode, notFound) {
     var prefix = ', { "' + filename.replaceAll(".png", "") + ' ", "\\u';
     var postfix = '" }';
     var value = '';
     if (unicode === "")
-        value = "f506";
+        value = notFound;
     else
         value = unicode.toLowerCase();
 
@@ -140,14 +140,15 @@ function icon_map() {
 
         insertTextCell(tr, lineData[2]);
         insertTextCell(tr, lineData[3]);
-        var b = createQML(lineData[0], lineData[3]);
+        var b = createQML(lineData[0], lineData[3], "f506");
         bootstrapString += b + "\n";
         insertTextCell(tr, b);
         insertTextCell(tr, lineData[4]);
         insertTextCell(tr, lineData[5]);
-        var f = createQML(lineData[0], lineData[5]);
+        var f = createQML(lineData[0], lineData[5], "3f");
         fontawesomeString += f + "\n";
         insertTextCell(tr, f);
+
     });
     document.getElementById('root').appendChild(tbl);
 }
