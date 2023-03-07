@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html>
+<html data-bs-theme="dark">
 
 <head>
 	<title>iconmap</title>
@@ -26,8 +26,7 @@
 </head>
 
 <body>
-	<div class="container">
-
+	<!-- <div class="container"> -->
 		<div class="alert alert-info mt-3 ml-3 mr-3" role="alert" style="width:95%;">
 			<a href="https://docs.google.com/spreadsheets/d/18KwCXb7L_eRiIjlvlFPz9NtFpcaikRC3tJKEjkD_BbQ/edit?usp=sharing"
 				class="alert-link" target="_blank">Google Sheet</a>,
@@ -36,7 +35,7 @@
 		</div>
 		<div id="root" style="width:95%;"></div>
 
-	</div>
+	<!-- </div> -->
 
 	<script>icon_map();</script>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -48,4 +47,50 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
 		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
 		crossorigin="anonymous"></script>
+
+		<script>
+
+			$(document).ready(function() {
+		
+				$(".CopyColumn").click(function(){
+		
+					var btn = $(this);
+		
+					// Disable the button whilst the clipboard copy is performed
+					btn.prop("disabled", true);
+		
+					var colData = "";
+		
+					// Use a line break to seperate the column data if no separator is specified
+					var colSeparator = (btn.data("separator")===undefined) ? "\n" : btn.data("separator");
+		
+					// Loop through all elements with the target class
+					$(btn.data("target")).each(function() {
+						// Collect the column data and add the separator
+						colData += $(this).text() + colSeparator;
+					});
+		
+					// Copy the column data to the clipboard
+					copyToClipboard(colData.trim());
+		
+					// Make a copy of the button text
+					var btn_txt = btn.html();
+		
+					// Change the button text to "Copied"
+					btn.html("Copied");
+		
+					// Revert the button text after 1.5 seconds
+					setTimeout(function(){
+						btn.html(btn_txt);
+						// Enable the button
+						btn.prop("disabled", false);
+					},1500);
+		
+				});
+		
+			});
+		
+		</script>
+
+
 </body>

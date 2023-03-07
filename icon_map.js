@@ -37,6 +37,28 @@ function visitRawFile(filename, visitor) {
     dataFile.send();
 }
 
+function copyToClipboard(text) {
+    if (window.clipboardData && window.clipboardData.setData) {
+        // IE specific code path to prevent textarea being shown while dialog is visible.
+        return clipboardData.setData("Text", text); 
+    }     
+    else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var textarea = document.createElement("textarea");
+        textarea.textContent = text;
+        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+        } catch (ex) {
+            console.warn("Copy to clipboard failed.", ex);
+            return false;
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    }
+}
+
 function visitRawLineData(file, visitLine, onFinished) {
     visitRawFile(file, function (allTextLines) {
         for (var index = 0; index < allTextLines.length; index++) {
@@ -51,31 +73,48 @@ function visitRawLineData(file, visitLine, onFinished) {
         }
     });
 }
-    
+
 function icon_map() {
     tbl = document.createElement('table');
-    tbody = document.createElement('tbody');
     thead = document.createElement('thead');
-    
+
     tbl.classList.add('table');
 
     tbl.appendChild(thead);
 
-    var orderArrayHeader = [
+    var header = [
         'Filename'
-        ,'Icons'
-        ,'Bootstrap'
-        ,'Unicode'
-        ,''
-        ,'Font Awesome'
-        ,'Unicode'
+        , 'Icons'
+        , 'Bootstrap'
+        , 'Unicode'
+        , 'QML'
+        , 'Font Awesome'
+        , 'Unicode'
+        , 'QML'
     ];
+    
+    var isBootstrap = true;
 
-    for( var i = 0; i <orderArrayHeader.length; i++ )
-    {    
-        thead.appendChild(document.createElement( 'th' )).appendChild( document.createTextNode( orderArrayHeader[i] ) );
+    for (let index in header) 
+    {
+        var text = document.createElement('th');
+        text.appendChild(document.createTextNode(header[index]));
+        
+        qmlColumn = isBootstrap ? '.bootstrap' : '.fontawesome';
+
+        if ( header[index] == 'QML' ) 
+        {
+            var btn = document.createElement('button');
+            btn.textContent = 'Copy';
+            btn.setAttribute('class', 'CopyColumn btn btn-link');
+            btn.setAttribute('data-target', qmlColumn);
+            text.append(btn);
+            bootstrap = false;
+        }
+
+        thead.append(text);
     }
-
+    
     visitRawLineData("https://docs.google.com/spreadsheets/d/e/2PACX-1vQNViAz8Odapir5C-zl8sIC5D1qWKvWayMJVGNnwK7sSXF56hVBmS7UiKeY4Xv2F2M47_FBbLr--Xnp/pub?gid=0&single=true&output=csv", function (lineData) {
         const tr = tbl.insertRow();
         {
@@ -88,14 +127,14 @@ function icon_map() {
             var img = document.createElement('img');
             img.src = "https://quatmax.github.io/icon_map/png/" + lineData[0];
             td.appendChild(img);
-            
+
             var img = document.createElement('img');
             img.src = "https://quatmax.github.io/icon_map/bi/" + lineData[2] + ".svg";
             img.style.height = '32px';
             img.style.width = '32px';
             td.appendChild(img);
-            
-            var li = document.createElement( 'li' );
+
+            var li = document.createElement('li');
             li.className = "fa-solid fa-xl fa-" + lineData[4];
             td.appendChild(li);
         }
@@ -111,6 +150,7 @@ function icon_map() {
         }
         {
             const td = tr.insertCell();
+            td.className = "bootstrap";
             var prefix = ', { "' + lineData[0].replaceAll(".png", "") + ' ", "\\u';
             var postfix = '" }';
             var value = '';
@@ -130,6 +170,20 @@ function icon_map() {
         {
             const td = tr.insertCell();
             var text = document.createTextNode(lineData[5]);
+            td.appendChild(text);
+        }
+        {
+            const td = tr.insertCell();
+            td.className = "fontawesome";
+            var prefix = ', { "' + lineData[0].replaceAll(".png", "") + ' ", "\\u';
+            var postfix = '" }';
+            var value = '';
+            if (lineData[5] === "")
+                value = "f506";
+            else
+                value = lineData[5].toLowerCase();
+
+            text = document.createTextNode(prefix + value + postfix);
             td.appendChild(text);
         }
     });
