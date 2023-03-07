@@ -37,28 +37,6 @@ function visitRawFile(filename, visitor) {
     dataFile.send();
 }
 
-function copyToClipboard(text) {
-    if (window.clipboardData && window.clipboardData.setData) {
-        // IE specific code path to prevent textarea being shown while dialog is visible.
-        return clipboardData.setData("Text", text);
-    }
-    else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-        var textarea = document.createElement("textarea");
-        textarea.textContent = text;
-        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-            return document.execCommand("copy");  // Security exception may be thrown by some browsers.
-        } catch (ex) {
-            console.warn("Copy to clipboard failed.", ex);
-            return false;
-        } finally {
-            document.body.removeChild(textarea);
-        }
-    }
-}
-
 function visitRawLineData(file, visitLine, onFinished) {
     visitRawFile(file, function (allTextLines) {
         for (var index = 0; index < allTextLines.length; index++) {
@@ -74,8 +52,7 @@ function visitRawLineData(file, visitLine, onFinished) {
     });
 }
 
-function createQML(filename, unicode) 
-{
+function createQML(filename, unicode) {
     var prefix = ', { "' + filename.replaceAll(".png", "") + ' ", "\\u';
     var postfix = '" }';
     var value = '';
@@ -87,101 +64,90 @@ function createQML(filename, unicode)
     return prefix + value + postfix;
 }
 
+function onClickCopy(text) {
+    navigator.clipboard.writeText(text);
+}
+
+function insertTextCell(tr, label) {
+    const td = tr.insertCell();
+    var text = document.createTextNode(label);
+    td.appendChild(text);
+}
+
+function insertImageCell(td, src) {
+    var img = document.createElement('img');
+    img.src = src;
+    img.style.height = '32px';
+    img.style.width = '32px';
+    td.appendChild(img);
+}
+
+function copyButton(header, onClick) {
+    var copy = document.createElement('button');
+    copy.textContent = "Copy " + header;
+    copy.setAttribute('class', 'btn btn-link');
+    copy.onclick = onClick;
+    return copy;
+}
+
 function icon_map() {
     tbl = document.createElement('table');
     thead = document.createElement('thead');
 
     tbl.classList.add('table');
-
     tbl.appendChild(thead);
 
-    var header = [
+    var headers = [
         'Filename'
         , 'Icons'
         , 'Bootstrap'
         , 'Unicode'
-        , 'QML'
+        , 'QMLBootstrap'
         , 'Font Awesome'
         , 'Unicode'
-        , 'QML'
+        , 'QMLFontAwesome'
     ];
 
-    var isBootstrap = true;
+    var bootstrapString = "";
+    var fontawesomeString = "";
 
-    for (let index in header) {
+    for (let index in headers) {
+        var header = headers[index];
         var text = document.createElement('th');
-        text.appendChild(document.createTextNode(header[index]));
-
-        qmlColumn = isBootstrap ? '.bootstrap' : '.fontawesome';
-
-        if (header[index] == 'QML') {
-            var btn = document.createElement('button');
-            btn.textContent = 'Copy';
-            btn.setAttribute('class', 'CopyColumn btn btn-link');
-            btn.setAttribute('data-target', qmlColumn);
-            text.append(btn);
-            isBootstrap = false;
+        if (header == 'QMLBootstrap') {
+            text.appendChild(copyButton(header, function () { onClickCopy(bootstrapString) }));
         }
-
+        else if (header == 'QMLFontAwesome') {
+            text.appendChild(copyButton(header, function () { onClickCopy(fontawesomeString) }));
+        }
+        else {
+            text.appendChild(document.createTextNode(header));
+        }
         thead.append(text);
     }
 
     visitRawLineData("https://docs.google.com/spreadsheets/d/e/2PACX-1vQNViAz8Odapir5C-zl8sIC5D1qWKvWayMJVGNnwK7sSXF56hVBmS7UiKeY4Xv2F2M47_FBbLr--Xnp/pub?gid=0&single=true&output=csv", function (lineData) {
         const tr = tbl.insertRow();
-        {
-            const td = tr.insertCell();
-            var text = document.createTextNode(lineData[0]);
-            td.appendChild(text);
-        }
-        {
-            const td = tr.insertCell();
-            var img = document.createElement('img');
-            img.src = "https://quatmax.github.io/icon_map/png/" + lineData[0];
-            td.appendChild(img);
 
-            var img = document.createElement('img');
-            img.src = "https://quatmax.github.io/icon_map/bi/" + lineData[2] + ".svg";
-            img.style.height = '32px';
-            img.style.width = '32px';
-            td.appendChild(img);
+        insertTextCell(tr, lineData[0]);
+        const td = tr.insertCell();
+        insertImageCell(td, "https://quatmax.github.io/icon_map/png/" + lineData[0]);
+        insertImageCell(td, "https://quatmax.github.io/icon_map/bi/" + lineData[2] + ".svg");
 
-            var li = document.createElement('li');
-            li.className = "fa-solid fa-xl fa-" + lineData[4];
-            td.appendChild(li);
-        }
-        {
-            const td = tr.insertCell();
-            var text = document.createTextNode(lineData[2]);
-            td.appendChild(text);
-        }
-        {
-            const td = tr.insertCell();
-            var text = document.createTextNode(lineData[3]);
-            td.appendChild(text);
-        }
-        {
-            const td = tr.insertCell();
-            td.className = "bootstrap";
-            text = document.createTextNode( createQML( lineData[0], lineData[3] ) );
-            td.appendChild(text);
-        }
-        {
-            const td = tr.insertCell();
-            var text = document.createTextNode(lineData[4]);
-            td.appendChild(text);
-        }
-        {
-            const td = tr.insertCell();
-            var text = document.createTextNode(lineData[5]);
-            td.appendChild(text);
-        }
-        {
+        var li = document.createElement('li');
+        li.className = "fa-solid fa-xl fa-" + lineData[4];
+        td.appendChild(li);
 
-            const td = tr.insertCell();
-            td.className = "fontawesome";
-            text = document.createTextNode( createQML( lineData[0], lineData[5] ) );
-            td.appendChild(text);
-        }
+        insertTextCell(tr, lineData[2]);
+        insertTextCell(tr, lineData[3]);
+        var b = createQML(lineData[0], lineData[3]);
+        bootstrapString += b + "\n";
+        insertTextCell(tr, b);
+        insertTextCell(tr, lineData[4]);
+        insertTextCell(tr, lineData[5]);
+        var f = createQML(lineData[0], lineData[5]);
+        fontawesomeString += f + "\n";
+        insertTextCell(tr, f);
     });
     document.getElementById('root').appendChild(tbl);
 }

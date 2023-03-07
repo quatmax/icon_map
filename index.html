@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html data-bs-theme="dark">
+<html>
 
 <head>
 	<title>iconmap</title>
@@ -35,57 +35,10 @@
 	<div id="root" style="width:95%;"></div>
 
 	<script>icon_map();</script>
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-		crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
 		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
 		crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
 		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
 		crossorigin="anonymous"></script>
-
-	<script>
-		$(document).ready(function () {
-
-			$(".CopyColumn").click(function () {
-
-				var btn = $(this);
-
-				// Disable the button whilst the clipboard copy is performed
-				btn.prop("disabled", true);
-
-				var colData = "";
-
-				// Use a line break to seperate the column data if no separator is specified
-				var colSeparator = (btn.data("separator") === undefined) ? "\n" : btn.data("separator");
-
-				// Loop through all elements with the target class
-				$(btn.data("target")).each(function () {
-					// Collect the column data and add the separator
-					colData += $(this).text() + colSeparator;
-				});
-
-				// Copy the column data to the clipboard
-				copyToClipboard(colData.trim());
-
-				// Make a copy of the button text
-				var btn_txt = btn.html();
-
-				// Change the button text to "Copied"
-				btn.html("Copied");
-
-				// Revert the button text after 1.5 seconds
-				setTimeout(function () {
-					btn.html(btn_txt);
-					// Enable the button
-					btn.prop("disabled", false);
-				}, 1500);
-
-			});
-
-		});
-	</script>
-
-
 </body>
