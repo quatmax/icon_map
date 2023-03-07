@@ -74,7 +74,7 @@ function visitRawLineData(file, visitLine, onFinished) {
     });
 }
 
-function createQMLText(filename, unicode) 
+function createQML(filename, unicode) 
 {
     var prefix = ', { "' + filename.replaceAll(".png", "") + ' ", "\\u';
     var postfix = '" }';
@@ -162,7 +162,7 @@ function icon_map() {
         {
             const td = tr.insertCell();
             td.className = "bootstrap";
-            text = document.createTextNode( createQMLText( lineData[0], lineData[3] ) );
+            text = document.createTextNode( createQML( lineData[0], lineData[3] ) );
             td.appendChild(text);
         }
         {
@@ -179,7 +179,7 @@ function icon_map() {
 
             const td = tr.insertCell();
             td.className = "fontawesome";
-            text = document.createTextNode( createQMLText( lineData[0], lineData[5] ) );
+            text = document.createTextNode( createQML( lineData[0], lineData[5] ) );
             td.appendChild(text);
         }
     });
