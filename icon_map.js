@@ -51,13 +51,33 @@ function visitRawLineData(file, visitLine, onFinished) {
         }
     });
 }
-
+    
 function icon_map() {
     tbl = document.createElement('table');
-    tbl.classList.add("table");
+    tbody = document.createElement('tbody');
+    thead = document.createElement('thead');
+    
+    tbl.classList.add('table');
+
+    tbl.appendChild(thead);
+
+    var orderArrayHeader = [
+        'Filename'
+        ,'Icons'
+        ,'Bootstrap'
+        ,'Unicode'
+        ,''
+        ,'Font Awesome'
+        ,'Unicode'
+    ];
+
+    for( var i = 0; i <orderArrayHeader.length; i++ )
+    {    
+        thead.appendChild(document.createElement( 'th' )).appendChild( document.createTextNode( orderArrayHeader[i] ) );
+    }
+
     visitRawLineData("https://docs.google.com/spreadsheets/d/e/2PACX-1vQNViAz8Odapir5C-zl8sIC5D1qWKvWayMJVGNnwK7sSXF56hVBmS7UiKeY4Xv2F2M47_FBbLr--Xnp/pub?gid=0&single=true&output=csv", function (lineData) {
         const tr = tbl.insertRow();
-
         {
             const td = tr.insertCell();
             var text = document.createTextNode(lineData[0]);
@@ -68,11 +88,16 @@ function icon_map() {
             var img = document.createElement('img');
             img.src = "https://quatmax.github.io/icon_map/png/" + lineData[0];
             td.appendChild(img);
+            
             var img = document.createElement('img');
             img.src = "https://quatmax.github.io/icon_map/bi/" + lineData[2] + ".svg";
             img.style.height = '32px';
             img.style.width = '32px';
             td.appendChild(img);
+            
+            var li = document.createElement( 'li' );
+            li.className = "fa-solid fa-xl fa-" + lineData[4];
+            td.appendChild(li);
         }
         {
             const td = tr.insertCell();
@@ -95,6 +120,16 @@ function icon_map() {
                 value = lineData[3].toLowerCase();
 
             var text = document.createTextNode(prefix + value + postfix);
+            td.appendChild(text);
+        }
+        {
+            const td = tr.insertCell();
+            var text = document.createTextNode(lineData[4]);
+            td.appendChild(text);
+        }
+        {
+            const td = tr.insertCell();
+            var text = document.createTextNode(lineData[5]);
             td.appendChild(text);
         }
     });
