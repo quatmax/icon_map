@@ -40,8 +40,8 @@ function visitRawFile(filename, visitor) {
 function copyToClipboard(text) {
     if (window.clipboardData && window.clipboardData.setData) {
         // IE specific code path to prevent textarea being shown while dialog is visible.
-        return clipboardData.setData("Text", text); 
-    }     
+        return clipboardData.setData("Text", text);
+    }
     else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
         var textarea = document.createElement("textarea");
         textarea.textContent = text;
@@ -74,6 +74,19 @@ function visitRawLineData(file, visitLine, onFinished) {
     });
 }
 
+function createQMLText(filename, unicode) 
+{
+    var prefix = ', { "' + filename.replaceAll(".png", "") + ' ", "\\u';
+    var postfix = '" }';
+    var value = '';
+    if (unicode === "")
+        value = "f506";
+    else
+        value = unicode.toLowerCase();
+
+    return prefix + value + postfix;
+}
+
 function icon_map() {
     tbl = document.createElement('table');
     thead = document.createElement('thead');
@@ -92,29 +105,27 @@ function icon_map() {
         , 'Unicode'
         , 'QML'
     ];
-    
+
     var isBootstrap = true;
 
-    for (let index in header) 
-    {
+    for (let index in header) {
         var text = document.createElement('th');
         text.appendChild(document.createTextNode(header[index]));
-        
+
         qmlColumn = isBootstrap ? '.bootstrap' : '.fontawesome';
 
-        if ( header[index] == 'QML' ) 
-        {
+        if (header[index] == 'QML') {
             var btn = document.createElement('button');
             btn.textContent = 'Copy';
             btn.setAttribute('class', 'CopyColumn btn btn-link');
             btn.setAttribute('data-target', qmlColumn);
             text.append(btn);
-            bootstrap = false;
+            isBootstrap = false;
         }
 
         thead.append(text);
     }
-    
+
     visitRawLineData("https://docs.google.com/spreadsheets/d/e/2PACX-1vQNViAz8Odapir5C-zl8sIC5D1qWKvWayMJVGNnwK7sSXF56hVBmS7UiKeY4Xv2F2M47_FBbLr--Xnp/pub?gid=0&single=true&output=csv", function (lineData) {
         const tr = tbl.insertRow();
         {
@@ -151,15 +162,7 @@ function icon_map() {
         {
             const td = tr.insertCell();
             td.className = "bootstrap";
-            var prefix = ', { "' + lineData[0].replaceAll(".png", "") + ' ", "\\u';
-            var postfix = '" }';
-            var value = '';
-            if (lineData[3] === "")
-                value = "f506";
-            else
-                value = lineData[3].toLowerCase();
-
-            var text = document.createTextNode(prefix + value + postfix);
+            text = document.createTextNode( createQMLText( lineData[0], lineData[3] ) );
             td.appendChild(text);
         }
         {
@@ -173,17 +176,10 @@ function icon_map() {
             td.appendChild(text);
         }
         {
+
             const td = tr.insertCell();
             td.className = "fontawesome";
-            var prefix = ', { "' + lineData[0].replaceAll(".png", "") + ' ", "\\u';
-            var postfix = '" }';
-            var value = '';
-            if (lineData[5] === "")
-                value = "f506";
-            else
-                value = lineData[5].toLowerCase();
-
-            text = document.createTextNode(prefix + value + postfix);
+            text = document.createTextNode( createQMLText( lineData[0], lineData[5] ) );
             td.appendChild(text);
         }
     });
