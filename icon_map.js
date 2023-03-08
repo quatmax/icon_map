@@ -53,7 +53,7 @@ function visitRawLineData(file, visitLine, onFinished) {
 }
 
 function createQML(filename, unicode, notFound) {
-    var prefix = ', { "' + filename.replaceAll(".png", "") + ' ", "\\u';
+    var prefix = ', { "' + filename.replaceAll(".png", "") + '", "\\u';
     var postfix = '" }';
     var value = '';
     if (unicode === "")
@@ -81,6 +81,14 @@ function insertImageCell(td, src) {
     img.style.width = '32px';
     td.appendChild(img);
 }
+function insertIconCell(td, iconCode) {
+	iconCode = iconCode ? iconCode : "003f";
+	var i = document.createElement('i');		
+	i.innerHTML = '&#x' + iconCode +';';
+	i.className = 'fa-regular fa-2x';
+	i.style = 'vertical-align: middle;'
+	td.appendChild(i);
+}
 
 function copyButton(header, onClick) {
     var copy = document.createElement('button');
@@ -103,8 +111,7 @@ function icon_map() {
         , 'Bootstrap'
         , 'Unicode'
         , 'QMLBootstrap'
-        , 'Font Awesome'
-        , 'Unicode'
+        , 'Font Awesome Unicode'
         , 'QMLFontAwesome'
     ];
 
@@ -133,19 +140,15 @@ function icon_map() {
         const td = tr.insertCell();
         insertImageCell(td, "https://quatmax.github.io/icon_map/png/" + lineData[0]);
         insertImageCell(td, "https://quatmax.github.io/icon_map/bi/" + lineData[2] + ".svg");
-
-        var li = document.createElement('li');
-        li.className = "fa-solid fa-xl fa-" + lineData[4];
-        td.appendChild(li);
+		insertIconCell(td, lineData[5]);
 
         insertTextCell(tr, lineData[2]);
-        insertTextCell(tr, lineData[3]);
+		insertTextCell(tr, lineData[3]);
         var b = createQML(lineData[0], lineData[3], "f506");
         bootstrapString += b + "\n";
         insertTextCell(tr, b);
-        insertTextCell(tr, lineData[4]);
         insertTextCell(tr, lineData[5]);
-        var f = createQML(lineData[0], lineData[5], "3f");
+        var f = createQML(lineData[0], lineData[5], "003f");
         fontawesomeString += f + "\n";
         insertTextCell(tr, f);
 
