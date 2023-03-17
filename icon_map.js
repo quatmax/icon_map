@@ -53,13 +53,17 @@ function visitRawLineData(file, visitLine, onFinished) {
 }
 
 function createQML(filename, unicode, notFound) {
-    var prefix = ', { "' + filename.replaceAll(".png", "") + '", "\\u';
+	const isAboveTwoByte = parseInt( unicode, 16 ) > 0xffff;
+    var prefix = ', { "' + filename.replaceAll(".png", "") + '", "' + ( isAboveTwoByte ? '\\U' : '\\u' );
     var postfix = '" }';
     var value = '';
     if (unicode === "")
         value = notFound;
     else
         value = unicode.toLowerCase();
+
+	value = '00000000' + value;
+	value = value.substring( value.length - ( isAboveTwoByte ? 8 : 4 ) );
 
     return prefix + value + postfix;
 }
@@ -82,10 +86,18 @@ function insertImageCell(td, src) {
     td.appendChild(img);
 }
 function insertIconCell(td, iconCode) {
-	iconCode = iconCode ? iconCode : "003f";
-	var i = document.createElement('i');		
+	iconCode 		= iconCode ? iconCode : "003f";
+	iconCodeNumber 	= parseInt( iconCode, 16 );
+	var i = document.createElement('i');
+	var fontToUse = 'fa-regular';
+	if( iconCodeNumber >= 0xf0000 && iconCodeNumber <= 0xffffd )
+	{
+		fontToUse 		= 'fa-kit';
+		iconCodeNumber 	= iconCodeNumber - 0xe2000;
+		iconCode 		= iconCodeNumber.toString( 16 );
+	}
 	i.innerHTML = '&#x' + iconCode +';';
-	i.className = 'fa-regular fa-2x';
+	i.className = fontToUse + ' fa-2x';
 	i.style = 'vertical-align: middle;'
 	td.appendChild(i);
 }
